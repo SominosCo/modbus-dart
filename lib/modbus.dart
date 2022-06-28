@@ -1,12 +1,17 @@
 import 'dart:async';
 import 'dart:typed_data';
+import 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'package:logging/logging.dart';
+
 import 'src/client.dart';
 import 'src/tcp_connector.dart';
-export 'src/exceptions.dart';
+import 'src/serial_connector.dart';
 export 'src/tcp_connector.dart';
+export 'src/serial_connector.dart';
+export 'src/exceptions.dart';
 
 typedef void FunctionCallback(int function, Uint8List data);
-typedef void ErrorCallback(error, stackTrace);
+typedef void ErrorCallback(dynamic error, dynamic stackTrace);
 typedef void CloseCallback();
 
 class ModbusFunctions {
@@ -94,6 +99,36 @@ abstract class ModbusClient {
 ModbusClient createClient(TcpConnector connector, {int unitId = 1}) =>
     ModbusClientImpl(connector, unitId);
 
-ModbusClient createTcpClient(address,
+ModbusClient createTcpClient(dynamic address,
         {int port = 502, ModbusMode mode = ModbusMode.rtu, int unitId = 1}) =>
     ModbusClientImpl(TcpConnector(address, port, mode), unitId);
+
+ModbusClient createRtuClient(String port, int baudRate,
+    {int dataBits = 8,
+    String parity = 'N',
+    int stopBits = 1,
+    ModbusMode mode = ModbusMode.rtu,
+    int unitId = 1}) {
+  var serial = SerialConnector(port, mode);
+  int parity_config = 0;
+  switch (parity) {
+    case 'N':
+      parity_config = SerialPortParity.none;
+      break;
+    case 'O':
+      parity_config = SerialPortParity.odd;
+      break;
+    case 'E':
+      parity_config = SerialPortParity.even;
+      break;
+    default:
+      // throw configuration exception?
+      throw UnsupportedError(
+          "[" + parity + "] is not a supported parity option");
+  }
+  serial.configure(
+      baudRate, dataBits, parity_config, stopBits, SerialPortFlowControl.none);
+  ModbusClient rtn = ModbusClientImpl(SerialConnector(port, mode), unitId);
+
+  return rtn;
+}

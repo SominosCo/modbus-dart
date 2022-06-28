@@ -1,7 +1,7 @@
 import 'package:modbus/modbus.dart' as modbus;
 import 'package:logging/logging.dart';
 
-main(List<String> arguments) async {
+void main(List<String> arguments) async {
   Logger.root.level = Level.ALL;
   Logger.root.onRecord.listen((LogRecord rec) {
     print('${rec.level.name}: ${rec.time} [${rec.loggerName}]: ${rec.message}');
