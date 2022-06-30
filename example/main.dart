@@ -1,4 +1,3 @@
-import 'package:modbus/modbus.dart' as modbus;
 import 'package:logging/logging.dart';
 
 import 'tcp_example.dart';

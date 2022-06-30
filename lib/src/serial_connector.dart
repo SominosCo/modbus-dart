@@ -3,7 +3,7 @@ import 'dart:typed_data';
 
 import 'package:logging/logging.dart';
 import '../modbus.dart';
-import 'package:flutter_libserialport/flutter_libserialport.dart';
+import 'package:libserialport/libserialport.dart';
 import 'acii_converter.dart';
 import 'util.dart';
 import 'crc.dart';
@@ -16,8 +16,6 @@ class SerialConnector extends ModbusConnector {
   final Logger log = new Logger('RtuConnector');
 
   SerialConnector(this._port, this._mode) {
-    //throw UnimplementedError("NOT IMPLEMENTED");
-
     _serial = SerialPort(this._port);
   }
 

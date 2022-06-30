@@ -5,10 +5,10 @@ homepage: https://github.com/Hacker-CB/modbus-dart
 description: Simple Modbus client library for dart. Currently only the TCP connection is supported.
 
 environment:
-  sdk: '>=2.17.0 <3.0.0'
+  sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
-  flutter_libserialport: ^0.2.3
+  libserialport: ^0.2.0+3
   logging: ^1.0.1
 
 dev_dependencies:
