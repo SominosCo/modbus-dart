@@ -126,8 +126,8 @@ ModbusClient createRtuClient(String port, int baudRate,
       throw UnsupportedError(
           "[" + parity + "] is not a supported parity option");
   }
-  serial.configure(
-      baudRate, dataBits, parity_config, stopBits, SerialPortFlowControl.none);
+  // serial.configure(
+  //     baudRate, dataBits, parity_config, stopBits, SerialPortFlowControl.none);
   ModbusClient rtn = ModbusClientImpl(SerialConnector(port, mode), unitId);
 
   return rtn;

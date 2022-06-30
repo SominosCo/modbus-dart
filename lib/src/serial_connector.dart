@@ -45,12 +45,17 @@ class SerialConnector extends ModbusConnector {
 
   @override
   Future<bool> connect() {
-    //throw UnimplementedError("NOT IMPLEMENTED");
+    if (_serial == null) {
+      log.finest('ERROR: Serial port is null.');
+      return Future.value(false);
+    }
 
-    if (_serial?.openReadWrite() != true) {
+    if (_serial!.openReadWrite() != true) {
       log.finest('ERROR: Error opening serial port @' + this._port);
       return Future.value(false);
     }
+    configure(baudRate, dataBits, parity_config, stopBits,
+        SerialPortFlowControl.none);
     return Future.value(true);
   }
 
