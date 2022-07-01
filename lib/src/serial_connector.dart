@@ -7,6 +7,7 @@ import 'package:libserialport/libserialport.dart';
 import 'acii_converter.dart';
 import 'util.dart';
 import 'crc.dart';
+import 'serial_enums.dart';
 
 class SerialConnector extends ModbusConnector {
   String _port;
@@ -20,11 +21,11 @@ class SerialConnector extends ModbusConnector {
   }
 
   int configure(
-    int baudRate,
-    int dataBits,
-    int parity,
-    int stopBits,
-    int flowControl,
+    ModbusBaudrate baudRate,
+    ModbusDataBits dataBits,
+    ModbusParity parity,
+    ModbusStopBits stopBits,
+    ModbusFlowControl flowControl,
   ) {
     if (_serial == null) {
       log.finest('ERROR: Serial port is null.');
@@ -34,12 +35,11 @@ class SerialConnector extends ModbusConnector {
       log.finest('ERROR: Serial port must be open before configuring.');
       return -1;
     }
-    var configs = SerialPortConfig();
-    _serial!.config.baudRate = baudRate;
-    _serial!.config.parity = parity;
-    _serial!.config.bits = dataBits; // data bits [5, 6, 7, 8]
-    _serial!.config.stopBits = stopBits; //[1, 2]
-    configs.setFlowControl(flowControl);
+    _serial!.config.baudRate = baudRate.value;
+    _serial!.config.parity = parity.value;
+    _serial!.config.bits = dataBits.value; // data bits [5, 6, 7, 8]
+    _serial!.config.stopBits = stopBits.value; //[1, 2]
+    _serial!.config.setFlowControl(flowControl.value);
     return 0;
   }
 
@@ -54,8 +54,6 @@ class SerialConnector extends ModbusConnector {
       log.finest('ERROR: Error opening serial port @' + this._port);
       return Future.value(false);
     }
-    configure(baudRate, dataBits, parity_config, stopBits,
-        SerialPortFlowControl.none);
     return Future.value(true);
   }
 

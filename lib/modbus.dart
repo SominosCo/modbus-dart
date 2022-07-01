@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 import 'package:libserialport/libserialport.dart';
-import 'package:logging/logging.dart';
+import 'package:modbus/src/serial_enums.dart';
 
 import 'src/client.dart';
 import 'src/tcp_connector.dart';
@@ -50,8 +50,6 @@ abstract class ModbusConnector {
   /// This should be called by the Connector implementation after closing connection (socket close, etc)
   CloseCallback? onClose;
 }
-
-enum ModbusMode { rtu, ascii }
 
 /// MODBUS client
 abstract class ModbusClient {
@@ -126,8 +124,21 @@ ModbusClient createRtuClient(String port, int baudRate,
       throw UnsupportedError(
           "[" + parity + "] is not a supported parity option");
   }
-  // serial.configure(
-  //     baudRate, dataBits, parity_config, stopBits, SerialPortFlowControl.none);
+  serial.configure(
+    baudRate,
+    dataBits,
+    parity_config,
+    stopBits,
+    SerialFlowControl.none,
+  );
+  //serial.connect().then(
+  //  (value) {
+  //    if (value) {
+  //      serial.configure(baudRate, dataBits, parity_config, stopBits,
+  //          SerialPortFlowControl.none);
+  //    }
+  //  },
+  //);
   ModbusClient rtn = ModbusClientImpl(SerialConnector(port, mode), unitId);
 
   return rtn;
