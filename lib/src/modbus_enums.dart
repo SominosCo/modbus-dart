@@ -1,20 +1,20 @@
-// enum ModbusFunctions {
-//   readCoils(0x01, "read coils"),
-//   readDiscreteInputs(0x02, "read discrete inputs"),
-//   readHoldingRegisters(0x03, "read holding register"),
-//   readInputRegisters(0x04, "read input register"),
-//   writeSingleCoil(0x05, "write single coil"),
-//   writeSingleRegister(0x06, "write single register"),
-//   readExceptionStatus(0x07,  "read exception status"),
-//   writeMultipleCoils(0x0f, "write multiple coils"),
-//   writeMultipleRegisters(0x10, "write multiple registers"),
-//   reportSlaveId(0x11, "report slave id");
+enum ModbusFunctions {
+  readCoils(0x01, "read coils"),
+  readDiscreteInputs(0x02, "read discrete inputs"),
+  readHoldingRegisters(0x03, "read holding register"),
+  readInputRegisters(0x04, "read input register"),
+  writeSingleCoil(0x05, "write single coil"),
+  writeSingleRegister(0x06, "write single register"),
+  readExceptionStatus(0x07, "read exception status"),
+  writeMultipleCoils(0x0f, "write multiple coils"),
+  writeMultipleRegisters(0x10, "write multiple registers"),
+  reportSlaveId(0x11, "report slave id");
 
-//   const ModbusFunctions(this.value, this.description);
-//   final int value;
-//   final String description;
-//   final String label = 'Modbus Function';
-// }
+  const ModbusFunctions(this.value, this.description);
+  final int value;
+  final String description;
+  final String label = 'Modbus Function';
+}
 
 enum ModbusMode {
   rtu(0, "rtu"),

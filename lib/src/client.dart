@@ -123,20 +123,23 @@ class ModbusClientImpl extends ModbusClient {
 
   @override
   Future<Uint8List> reportSlaveId() async {
-    var response = await executeFunction(ModbusFunctions.reportSlaveId);
+    var response = await executeFunction(ModbusFunctions.reportSlaveId.value);
     return response.sublist(1, response.elementAt(0) + 1);
   }
 
   @override
   Future<int> readExceptionStatus() async {
-    var response = await executeFunction(ModbusFunctions.readExceptionStatus);
+    var response =
+        await executeFunction(ModbusFunctions.readExceptionStatus.value);
     var codes = ByteData.view(response.buffer).getUint8(0);
     return codes;
   }
 
   Future<List<bool?>> _readBits(int function, int address, int amount) async {
     var data = Uint8List(4);
-    ByteData.view(data.buffer)..setUint16(0, address)..setUint16(2, amount);
+    ByteData.view(data.buffer)
+      ..setUint16(0, address)
+      ..setUint16(2, amount);
 
     var response = await executeFunction(function, data);
     var responseView = ByteData.view(response.buffer);
@@ -155,20 +158,22 @@ class ModbusClientImpl extends ModbusClient {
   Future<List<bool?>> readCoils(int address, int amount) async {
     if (amount < 1 || amount > 2000) throw ModbusAmountException();
 
-    return _readBits(ModbusFunctions.readCoils, address, amount);
+    return _readBits(ModbusFunctions.readCoils.value, address, amount);
   }
 
   @override
   Future<List<bool?>> readDiscreteInputs(int address, int amount) {
     if (amount < 1 || amount > 2000) throw ModbusAmountException();
 
-    return _readBits(ModbusFunctions.readDiscreteInputs, address, amount);
+    return _readBits(ModbusFunctions.readDiscreteInputs.value, address, amount);
   }
 
   Future<Uint16List> _readRegisters(
       int function, int address, int amount) async {
     var data = Uint8List(4);
-    ByteData.view(data.buffer)..setUint16(0, address)..setUint16(2, amount);
+    ByteData.view(data.buffer)
+      ..setUint16(0, address)
+      ..setUint16(2, amount);
 
     var response = await executeFunction(function, data);
 
@@ -186,14 +191,15 @@ class ModbusClientImpl extends ModbusClient {
     if (amount < 1 || amount > 125) throw ModbusAmountException();
 
     return _readRegisters(
-        ModbusFunctions.readHoldingRegisters, address, amount);
+        ModbusFunctions.readHoldingRegisters.value, address, amount);
   }
 
   @override
   Future<Uint16List> readInputRegisters(int address, int amount) async {
     if (amount < 1 || amount > 0x007D) throw ModbusAmountException();
 
-    return _readRegisters(ModbusFunctions.readInputRegisters, address, amount);
+    return _readRegisters(
+        ModbusFunctions.readInputRegisters.value, address, amount);
   }
 
   @override
@@ -203,7 +209,8 @@ class ModbusClientImpl extends ModbusClient {
       ..setUint16(0, address)
       ..setUint16(2, to_write ? 0xff00 : 0x0000);
 
-    var response = await executeFunction(ModbusFunctions.writeSingleCoil, data);
+    var response =
+        await executeFunction(ModbusFunctions.writeSingleCoil.value, data);
     var responseView = ByteData.view(response.buffer);
 
     return responseView.getUint16(2) == 0xff00 ? true : false;
@@ -212,10 +219,12 @@ class ModbusClientImpl extends ModbusClient {
   @override
   Future<int> writeSingleRegister(int address, int value) async {
     var data = Uint8List(4);
-    ByteData.view(data.buffer)..setUint16(0, address)..setUint16(2, value);
+    ByteData.view(data.buffer)
+      ..setUint16(0, address)
+      ..setUint16(2, value);
 
     var response =
-        await executeFunction(ModbusFunctions.writeSingleRegister, data);
+        await executeFunction(ModbusFunctions.writeSingleRegister.value, data);
     var responseView = ByteData.view(response.buffer);
 
     return responseView.getUint16(2);
@@ -247,7 +256,7 @@ class ModbusClientImpl extends ModbusClient {
       dataView.setUint8(5 + i, v);
     }
 
-    await executeFunction(ModbusFunctions.writeMultipleCoils, data);
+    await executeFunction(ModbusFunctions.writeMultipleCoils.value, data);
   }
 
   @override
@@ -268,6 +277,6 @@ class ModbusClientImpl extends ModbusClient {
       dataView.setUint16(5 + i * 2, values.elementAt(i));
     }
 
-    await executeFunction(ModbusFunctions.writeMultipleRegisters, data);
+    await executeFunction(ModbusFunctions.writeMultipleRegisters.value, data);
   }
 }

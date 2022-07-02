@@ -14,19 +14,6 @@ typedef void FunctionCallback(int function, Uint8List data);
 typedef void ErrorCallback(dynamic error, dynamic stackTrace);
 typedef void CloseCallback();
 
-class ModbusFunctions {
-  static const readCoils = 0x01;
-  static const readDiscreteInputs = 0x02;
-  static const readHoldingRegisters = 0x03;
-  static const readInputRegisters = 0x04;
-  static const writeSingleCoil = 0x05;
-  static const writeSingleRegister = 0x06;
-  static const readExceptionStatus = 0x07;
-  static const writeMultipleCoils = 0x0f;
-  static const writeMultipleRegisters = 0x10;
-  static const reportSlaveId = 0x11;
-}
-
 /// MODBUS Connector.
 abstract class ModbusConnector {
   /// Connect will be called from the [ModbusClient] to establish connection
@@ -109,6 +96,7 @@ ModbusClient createRtuClient(String port, ModbusBaudrate baudRate,
     ModbusMode mode = ModbusMode.rtu,
     int unitId = 1}) {
   var serial = SerialConnector(port, mode);
+  serial.connect();
   serial.configure(
     baudRate,
     dataBits,
