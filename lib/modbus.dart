@@ -1,14 +1,14 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'package:libserialport/libserialport.dart';
-import 'package:modbus/src/serial_enums.dart';
 
+import 'src/modbus_enums.dart';
 import 'src/client.dart';
 import 'src/tcp_connector.dart';
 import 'src/serial_connector.dart';
 export 'src/tcp_connector.dart';
 export 'src/serial_connector.dart';
 export 'src/exceptions.dart';
+export 'src/modbus_enums.dart';
 
 typedef void FunctionCallback(int function, Uint8List data);
 typedef void ErrorCallback(dynamic error, dynamic stackTrace);
@@ -101,44 +101,21 @@ ModbusClient createTcpClient(dynamic address,
         {int port = 502, ModbusMode mode = ModbusMode.rtu, int unitId = 1}) =>
     ModbusClientImpl(TcpConnector(address, port, mode), unitId);
 
-ModbusClient createRtuClient(String port, int baudRate,
-    {int dataBits = 8,
-    String parity = 'N',
-    int stopBits = 1,
+ModbusClient createRtuClient(String port, ModbusBaudrate baudRate,
+    {ModbusDataBits dataBits = ModbusDataBits.bits_8,
+    ModbusParity parity = ModbusParity.none,
+    ModbusStopBits stopBits = ModbusStopBits.stopBits_1,
+    ModbusFlowControl flowControl = ModbusFlowControl.none,
     ModbusMode mode = ModbusMode.rtu,
     int unitId = 1}) {
   var serial = SerialConnector(port, mode);
-  int parity_config = 0;
-  switch (parity) {
-    case 'N':
-      parity_config = SerialPortParity.none;
-      break;
-    case 'O':
-      parity_config = SerialPortParity.odd;
-      break;
-    case 'E':
-      parity_config = SerialPortParity.even;
-      break;
-    default:
-      // throw configuration exception?
-      throw UnsupportedError(
-          "[" + parity + "] is not a supported parity option");
-  }
   serial.configure(
     baudRate,
     dataBits,
-    parity_config,
+    parity,
     stopBits,
-    SerialFlowControl.none,
+    flowControl,
   );
-  //serial.connect().then(
-  //  (value) {
-  //    if (value) {
-  //      serial.configure(baudRate, dataBits, parity_config, stopBits,
-  //          SerialPortFlowControl.none);
-  //    }
-  //  },
-  //);
   ModbusClient rtn = ModbusClientImpl(SerialConnector(port, mode), unitId);
 
   return rtn;

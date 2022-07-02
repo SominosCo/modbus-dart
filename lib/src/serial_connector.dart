@@ -6,8 +6,6 @@ import '../modbus.dart';
 import 'package:libserialport/libserialport.dart';
 import 'acii_converter.dart';
 import 'util.dart';
-import 'crc.dart';
-import 'serial_enums.dart';
 
 class SerialConnector extends ModbusConnector {
   String _port;

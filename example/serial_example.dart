@@ -1,20 +1,21 @@
 import 'package:modbus/modbus.dart' as modbus;
+import 'package:modbus/src/modbus_enums.dart';
 
 void serialExample() async {
   modbus.ModbusClient? client;
   try {
-    var client = modbus.createRtuClient(
+    client = modbus.createRtuClient(
       '/dev/ttyUSB0',
-      9600,
-      dataBits: 8,
-      mode: modbus.ModbusMode.rtu,
-      parity: 'N',
-      stopBits: 1,
+      ModbusBaudrate.fromInt(9600),
+      dataBits: ModbusDataBits.fromInt(8),
+      mode: ModbusMode.rtu,
+      parity: ModbusParity.none,
+      stopBits: ModbusStopBits.stopBits_1,
       unitId: 1,
     );
   } catch (e) {
     // handle process exception
-    print(e);
+    print('Exception caught: $e');
   }
 
   if (client != null) {

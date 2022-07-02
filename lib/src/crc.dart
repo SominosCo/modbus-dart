@@ -38,7 +38,7 @@ const List<int> modbusCrcTable = [
 ByteBuffer modbusCRC(ByteBuffer inBuffer) {
   final temp = ByteData(1);
   final nCRC = ByteData(2)..setUint16(0, 0xFFFF);
-  for (final byte in inBuffer.asUint8List()) {
+  for (final _ in inBuffer.asUint8List()) {
     temp.setUint8(0, temp.getUint8(0) ^ nCRC.getUint8(0));
     nCRC
       ..setUint16(0, nCRC.getUint16(0) >> 8)

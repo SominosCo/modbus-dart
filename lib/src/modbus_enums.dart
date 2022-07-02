@@ -1,3 +1,21 @@
+// enum ModbusFunctions {
+//   readCoils(0x01, "read coils"),
+//   readDiscreteInputs(0x02, "read discrete inputs"),
+//   readHoldingRegisters(0x03, "read holding register"),
+//   readInputRegisters(0x04, "read input register"),
+//   writeSingleCoil(0x05, "write single coil"),
+//   writeSingleRegister(0x06, "write single register"),
+//   readExceptionStatus(0x07,  "read exception status"),
+//   writeMultipleCoils(0x0f, "write multiple coils"),
+//   writeMultipleRegisters(0x10, "write multiple registers"),
+//   reportSlaveId(0x11, "report slave id");
+
+//   const ModbusFunctions(this.value, this.description);
+//   final int value;
+//   final String description;
+//   final String label = 'Modbus Function';
+// }
+
 enum ModbusMode {
   rtu(0, "rtu"),
   ascii(1, "ascii");
@@ -33,6 +51,9 @@ enum ModbusBaudrate {
   baud_115200(115200, "115.2 kbps");
 
   const ModbusBaudrate(this.value, this.description);
+  factory ModbusBaudrate.fromInt(int spd) {
+    return ModbusBaudrate.values.firstWhere((element) => element.value == spd);
+  }
   final int value;
   final String description;
   final String label = 'Baud Rate';
@@ -45,6 +66,9 @@ enum ModbusDataBits {
   bits_8(8, "8 bits");
 
   const ModbusDataBits(this.value, this.description);
+  factory ModbusDataBits.fromInt(int bits) {
+    return ModbusDataBits.values.firstWhere((element) => element.value == bits);
+  }
   final int value;
   final String description;
   final String label = 'Data Bits';
@@ -55,6 +79,9 @@ enum ModbusStopBits {
   stopBits_2(2, "2 Stop Bits");
 
   const ModbusStopBits(this.value, this.description);
+  factory ModbusStopBits.fromInt(int bits) {
+    return ModbusStopBits.values.firstWhere((element) => element.value == bits);
+  }
   final int value;
   final String description;
   final String label = 'Stop Bits';
@@ -130,14 +157,19 @@ enum ModbusPortMode {
 }
 
 enum ModbusParity {
-  none(0, "none"),
-  odd(1, "odd"),
-  even(2, "even"),
-  mark(3, "mark"),
-  space(4, "space");
+  none(0, "N", "none"),
+  odd(1, "O", "odd"),
+  even(2, "E", "even"),
+  mark(3, "M", "mark"),
+  space(4, "S", "space");
 
-  const ModbusParity(this.value, this.description);
+  const ModbusParity(this.value, this.shortName, this.description);
+  factory ModbusParity.fromString(String shortName) {
+    return ModbusParity.values
+        .firstWhere((element) => element.shortName == shortName);
+  }
   final int value;
+  final String shortName;
   final String description;
   final String label = 'Parity';
 }
