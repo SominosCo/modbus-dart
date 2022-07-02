@@ -16,6 +16,7 @@ class SerialConnector extends ModbusConnector {
 
   SerialConnector(this._port, this._mode) {
     _serial = SerialPort(this._port);
+    connect();
   }
 
   int configure(

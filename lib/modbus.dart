@@ -96,7 +96,6 @@ ModbusClient createRtuClient(String port, ModbusBaudrate baudRate,
     ModbusMode mode = ModbusMode.rtu,
     int unitId = 1}) {
   var serial = SerialConnector(port, mode);
-  serial.connect();
   serial.configure(
     baudRate,
     dataBits,
@@ -104,7 +103,7 @@ ModbusClient createRtuClient(String port, ModbusBaudrate baudRate,
     stopBits,
     flowControl,
   );
-  ModbusClient rtn = ModbusClientImpl(SerialConnector(port, mode), unitId);
+  ModbusClient rtn = ModbusClientImpl(serial, unitId);
 
   return rtn;
 }
