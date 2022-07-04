@@ -69,3 +69,6 @@ main(List<String> arguments) async {
 ## Limitations
 
 SerialConnector is not implemented yet.
+
+## Notes
+If you have installed libserialport but dart is unable to find it, verify LIBSERIALPORT_PATH environment variable is set correctly.

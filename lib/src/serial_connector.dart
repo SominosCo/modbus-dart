@@ -6,6 +6,7 @@ import '../modbus.dart';
 import 'package:libserialport/libserialport.dart';
 import 'acii_converter.dart';
 import 'util.dart';
+import 'crc.dart';
 
 class SerialConnector extends ModbusConnector {
   String _port;
@@ -50,7 +51,10 @@ class SerialConnector extends ModbusConnector {
     }
 
     if (_serial!.openReadWrite() != true) {
-      log.finest('ERROR: Error opening serial port @' + this._port);
+      log.finest('ERROR: Error opening serial port @' +
+          this._port +
+          ". Error: " +
+          SerialPort.lastError.toString());
       return Future.value(false);
     }
     return Future.value(true);
@@ -58,7 +62,32 @@ class SerialConnector extends ModbusConnector {
 
   @override
   void write(int function, Uint8List data) {
-    throw UnimplementedError("NOT IMPLEMENTED");
+    if (_serial == null) {
+      log.finest('ERROR: Serial port is null.');
+      return;
+    }
+    if (_serial!.isOpen != true) {
+      log.finest('ERROR: Serial port must be open to write.');
+      return;
+    }
+    print("function: ${function}");
+    print("data: ${data}");
+    //size: function + address + data length + crc
+    var tx_data = ByteData(1 + 1 + data.lengthInBytes + 2);
+    int i = 0;
+    tx_data.setUint8(i, _unitId);
+    i++;
+    tx_data.setUint8(i, function);
+    i++;
+    for (var item in data) {
+      tx_data.setUint8(i, item);
+      i++;
+    }
+    var crc = modbusCRC(tx_data.buffer).asUint8List();
+    tx_data.setUint8(i, crc[0]);
+    i++;
+    tx_data.setUint8(i, crc[1]);
+    _serial!.write(tx_data.buffer.asUint8List());
   }
 
   @override
