@@ -88,6 +88,7 @@ class SerialConnector extends ModbusConnector {
       tx_data.setUint8(i++, modbusLRC(tx_data.buffer.asUint8List()));
     } else {
       var crc = modbusCRC(tx_data.buffer).asUint8List();
+      var other_crc = theirCRC(tx_data.buffer.asUint8List());
       tx_data.setUint8(i++, crc[0]);
       tx_data.setUint8(i++, crc[1]);
     }
@@ -137,26 +138,5 @@ class SerialConnector extends ModbusConnector {
     int function = view.getUint8(7);
 
     onResponse(function, rtuData.sublist(8, 8 + len - 2 /*unitId + function*/));
-  }
-
-  Uint8List _crc(Uint8List bytes) {
-    var crc = BigInt.from(0xffff);
-    var poly = BigInt.from(0xa001);
-
-    for (var byte in bytes) {
-      var bigByte = BigInt.from(byte);
-      crc = crc ^ bigByte;
-      for (int n = 0; n <= 7; n++) {
-        int carry = crc.toInt() & 0x1;
-        crc = crc >> 1;
-        if (carry == 0x1) {
-          crc = crc ^ poly;
-        }
-      }
-    }
-    //return crc.toUnsigned(16).toInt();
-    var ret = Uint8List(2);
-    ByteData.view(ret.buffer).setUint16(0, crc.toUnsigned(16).toInt());
-    return ret;
   }
 }

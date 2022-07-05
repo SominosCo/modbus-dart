@@ -46,3 +46,24 @@ ByteBuffer modbusCRC(ByteBuffer inBuffer) {
   }
   return nCRC.buffer;
 }
+
+Uint8List theirCRC(Uint8List bytes) {
+  var crc = BigInt.from(0xffff);
+  var poly = BigInt.from(0xa001);
+
+  for (var byte in bytes) {
+    var bigByte = BigInt.from(byte);
+    crc = crc ^ bigByte;
+    for (int n = 0; n <= 7; n++) {
+      int carry = crc.toInt() & 0x1;
+      crc = crc >> 1;
+      if (carry == 0x1) {
+        crc = crc ^ poly;
+      }
+    }
+  }
+  //return crc.toUnsigned(16).toInt();
+  var ret = Uint8List(2);
+  ByteData.view(ret.buffer).setUint16(0, crc.toUnsigned(16).toInt());
+  return ret;
+}
