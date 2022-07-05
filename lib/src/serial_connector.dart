@@ -120,23 +120,17 @@ class SerialConnector extends ModbusConnector {
     _unitId = unitId;
   }
 
-/**
- * callback if bytes are available 
- * TODO: Review, I copied from tcp
- */
   void _onData(Uint8List rtuData) {
     if (_mode == ModbusMode.ascii) {
-      rtuData = AsciiConverter.fromAscii(rtuData);
+      rtuData = AsciiConverter.fromAsciiWithHeader(rtuData);
     }
 
     log.finest('RECV: ' + dumpHexToString(rtuData));
     var view = ByteData.view(rtuData.buffer);
-    int tid = view.getUint16(0); // ignore: unused_local_variable
-    int len = view.getUint16(4);
-    int unitId = view.getUint8(6); // ignore: unused_local_variable
-    int function = view.getUint8(7);
+    int unitId = view.getUint8(0); // ignore: unused_local_variable
+    int function = view.getUint8(1);
 
-    onResponse(function, rtuData.sublist(8, 8 + len - 2 /*unitId + function*/));
+    onResponse(function, rtuData.sublist(2, rtuData.length));
   }
 
   Uint8List _crc(Uint8List bytes) {
