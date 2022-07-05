@@ -6,7 +6,7 @@ import 'package:logging/logging.dart';
 import 'package:modbus/src/lrc.dart';
 import '../modbus.dart';
 import 'package:libserialport/libserialport.dart';
-import 'acii_converter.dart';
+import 'ascii_converter.dart';
 import 'util.dart';
 import 'crc.dart';
 

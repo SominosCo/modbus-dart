@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:logging/logging.dart';
 
 import '../modbus.dart';
-import 'acii_converter.dart';
+import 'ascii_converter.dart';
 import 'util.dart';
 
 /// MODBUS TCP Connector
