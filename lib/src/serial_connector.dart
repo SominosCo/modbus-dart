@@ -118,7 +118,7 @@ class SerialConnector extends ModbusConnector {
  * callback if bytes are available 
  * TODO: Review, I copied from tcp
  */
-  void _onData(List<int> rtuData) {
+  void _onData(Uint8List rtuData) {
     if (_mode == ModbusMode.ascii) {
       rtuData = AsciiConverter.fromAscii(rtuData);
     }
@@ -130,8 +130,7 @@ class SerialConnector extends ModbusConnector {
     int unitId = view.getUint8(6); // ignore: unused_local_variable
     int function = view.getUint8(7);
 
-    onResponse(function,
-        rtuData.sublist(8, 8 + len - 2 /*unitId + function*/) as Uint8List);
+    onResponse(function, rtuData.sublist(8, 8 + len - 2 /*unitId + function*/));
   }
 
   Uint8List _crc(Uint8List bytes) {

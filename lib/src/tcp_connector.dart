@@ -41,7 +41,7 @@ class TcpConnector extends ModbusConnector {
     _unitId = unitId;
   }
 
-  void _onData(List<int> tcpData) {
+  void _onData(Uint8List tcpData) {
     if (_mode == ModbusMode.ascii) tcpData = AsciiConverter.fromAscii(tcpData);
 
     log.finest('RECV: ' + dumpHexToString(tcpData));
@@ -51,8 +51,7 @@ class TcpConnector extends ModbusConnector {
     int unitId = view.getUint8(6); // ignore: unused_local_variable
     int function = view.getUint8(7);
 
-    onResponse(function,
-        tcpData.sublist(8, 8 + len - 2 /*unitId + function*/) as Uint8List);
+    onResponse(function, tcpData.sublist(8, 8 + len - 2 /*unitId + function*/));
   }
 
   @override
