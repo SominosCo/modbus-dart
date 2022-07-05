@@ -21,6 +21,10 @@ class AsciiConverter {
     return Uint8List.fromList(ret);
   }
 
+  static Uint8List toAsciiWithHeader(List<int> data) {
+    return Uint8List.fromList([58] + toAscii(data));
+  }
+
   static Uint8List toAscii(List<int> tcpData) {
     StringBuffer sb = StringBuffer();
     tcpData.forEach((d) {

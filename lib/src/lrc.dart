@@ -9,7 +9,5 @@ int modbusLRC(Uint8List data) {
     print(nLRC.get());
   }
   nLRC.set(-nLRC.get());
-  print("FINAL:");
-  print(nLRC.get());
   return nLRC.get();
 }

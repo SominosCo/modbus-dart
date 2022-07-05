@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:logging/logging.dart';
+import 'package:modbus/src/lrc.dart';
 import '../modbus.dart';
 import 'package:libserialport/libserialport.dart';
 import 'acii_converter.dart';
@@ -19,6 +21,8 @@ class SerialConnector extends ModbusConnector {
     _serial = SerialPort(this._port);
     connect();
   }
+
+  bool get isAscii => _mode == ModbusMode.ascii;
 
   int configure(
     ModbusBaudrate baudRate,
@@ -70,24 +74,24 @@ class SerialConnector extends ModbusConnector {
       log.finest('ERROR: Serial port must be open to write.');
       return;
     }
-    print("function: ${function}");
-    print("data: ${data}");
-    //size: function + address + data length + crc
-    var tx_data = ByteData(1 + 1 + data.lengthInBytes + 2);
+    // data size: function + address + data length + crc(lrc)
+    var tx_data = ByteData(1 + 1 + data.lengthInBytes + (isAscii ? 1 : 2));
     int i = 0;
-    tx_data.setUint8(i, _unitId);
-    i++;
-    tx_data.setUint8(i, function);
-    i++;
-    for (var item in data) {
-      tx_data.setUint8(i, item);
-      i++;
+    tx_data.setUint8(i++, _unitId);
+    tx_data.setUint8(i++, function);
+    data.map((e) => tx_data.setUint8(i++, e));
+    if (isAscii) {
+      tx_data.setUint8(i++, modbusLRC(tx_data.buffer.asUint8List()));
+    } else {
+      var crc = modbusCRC(tx_data.buffer).asUint8List();
+      tx_data.setUint8(i++, crc[0]);
+      tx_data.setUint8(i++, crc[1]);
     }
-    var crc = modbusCRC(tx_data.buffer).asUint8List();
-    tx_data.setUint8(i, crc[0]);
-    i++;
-    tx_data.setUint8(i, crc[1]);
-    _serial!.write(tx_data.buffer.asUint8List());
+    if (isAscii)
+      _serial!.write(
+          AsciiConverter.toAsciiWithHeader(tx_data.buffer.asUint8List()));
+    else
+      _serial!.write(tx_data.buffer.asUint8List());
   }
 
   @override
