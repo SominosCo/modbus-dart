@@ -41,11 +41,11 @@ class TcpConnector extends ModbusConnector {
     _unitId = unitId;
   }
 
-  void _onData(List<int> tcpData) {
+  void _onData(Uint8List tcpData) {
     if (_mode == ModbusMode.ascii) tcpData = AsciiConverter.fromAscii(tcpData);
 
     log.finest('RECV: ' + dumpHexToString(tcpData));
-    var view = ByteData.view(Uint8List.fromList(tcpData).buffer);
+    var view = ByteData.view(tcpData.buffer);
     int tid = view.getUint16(0); // ignore: unused_local_variable
     int len = view.getUint16(4);
     int unitId = view.getUint8(6); // ignore: unused_local_variable

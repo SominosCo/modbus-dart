@@ -32,11 +32,11 @@ class SerialConnector extends ModbusConnector {
     ModbusFlowControl flowControl,
   ) {
     if (_serial == null) {
-      log.finest('ERROR: Serial port is null.');
+      log.severe('ERROR: Serial port is null.');
       return -1;
     }
     if (_serial!.isOpen != true) {
-      log.finest('ERROR: Serial port must be open before configuring.');
+      log.severe('ERROR: Serial port must be open before configuring.');
       return -1;
     }
     _serial!.config.baudRate = baudRate.value;
@@ -50,12 +50,17 @@ class SerialConnector extends ModbusConnector {
   @override
   Future<bool> connect() {
     if (_serial == null) {
-      log.finest('ERROR: Serial port is null.');
+      log.severe('ERROR: Serial port is null.');
       return Future.value(false);
     }
 
+    if (_serial!.isOpen) {
+      log.finest('Serial port is already connected.');
+      return Future.value(true);
+    }
+
     if (_serial!.openReadWrite() != true) {
-      log.finest('ERROR: Error opening serial port @' +
+      log.severe('ERROR: Error opening serial port @' +
           this._port +
           ". Error: " +
           SerialPort.lastError.toString());
@@ -67,11 +72,11 @@ class SerialConnector extends ModbusConnector {
   @override
   void write(int function, Uint8List data) {
     if (_serial == null) {
-      log.finest('ERROR: Serial port is null.');
+      log.severe('ERROR: Serial port is null.');
       return;
     }
     if (_serial!.isOpen != true) {
-      log.finest('ERROR: Serial port must be open to write.');
+      log.severe('ERROR: Serial port must be open to write.');
       return;
     }
     // data size: function + address + data length + crc(lrc)
@@ -90,15 +95,17 @@ class SerialConnector extends ModbusConnector {
     if (isAscii)
       _serial!.write(
           AsciiConverter.toAsciiWithHeader(tx_data.buffer.asUint8List()));
-    else
+    else {
+      log.finest(dumpHexToString(tx_data.buffer.asUint8List()));
       _serial!.write(tx_data.buffer.asUint8List());
+    }
   }
 
   @override
   Future<bool> close() {
     //throw UnimplementedError("NOT IMPLEMENTED");
     if (_serial?.close() != true) {
-      log.finest('ERROR: Error closing serial port');
+      log.severe('ERROR: Error closing serial port');
       return Future.value(false);
     }
     return Future.value(true);
@@ -108,7 +115,7 @@ class SerialConnector extends ModbusConnector {
   void setUnitId(int unitId) {
     //throw UnimplementedError("NOT IMPLEMENTED");
     if (unitId < 0 || unitId > 255) {
-      log.finest('ERROR: UnitId of ' + unitId.toString() + ' is out of range');
+      log.severe('ERROR: UnitId of ' + unitId.toString() + ' is out of range');
       return;
     }
     _unitId = unitId;
@@ -118,13 +125,13 @@ class SerialConnector extends ModbusConnector {
  * callback if bytes are available 
  * TODO: Review, I copied from tcp
  */
-  void _onData(List<int> rtuData) {
+  void _onData(Uint8List rtuData) {
     if (_mode == ModbusMode.ascii) {
       rtuData = AsciiConverter.fromAscii(rtuData);
     }
 
     log.finest('RECV: ' + dumpHexToString(rtuData));
-    var view = ByteData.view(Uint8List.fromList(rtuData).buffer);
+    var view = ByteData.view(rtuData.buffer);
     int tid = view.getUint16(0); // ignore: unused_local_variable
     int len = view.getUint16(4);
     int unitId = view.getUint8(6); // ignore: unused_local_variable

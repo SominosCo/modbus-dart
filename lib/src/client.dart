@@ -62,10 +62,10 @@ class ModbusClientImpl extends ModbusClient {
   }
 
   void _sendData(int function, Uint8List data) {
-    log.finest("SEND: fn: " +
-        function.toRadixString(16).padLeft(2, '0') +
-        "h data: " +
-        dumpHexToString(data));
+    log.finest(
+        "SEND: fn: ${ModbusFunctions.fromInt(function).description} (${function.toRadixString(16).padLeft(2, '0')}h)" +
+            " data: " +
+            dumpHexToString(data));
     _connector.write(function, data);
   }
 

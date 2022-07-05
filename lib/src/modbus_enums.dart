@@ -8,9 +8,13 @@ enum ModbusFunctions {
   readExceptionStatus(0x07, "read exception status"),
   writeMultipleCoils(0x0f, "write multiple coils"),
   writeMultipleRegisters(0x10, "write multiple registers"),
-  reportSlaveId(0x11, "report slave id");
+  reportSlaveId(0x11, "Report Slave ID");
 
   const ModbusFunctions(this.value, this.description);
+  factory ModbusFunctions.fromInt(int func) {
+    return ModbusFunctions.values
+        .firstWhere((element) => element.value == func);
+  }
   final int value;
   final String description;
   final String label = 'Modbus Function';
