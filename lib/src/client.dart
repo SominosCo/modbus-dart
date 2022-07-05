@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:logging/logging.dart';
 
 import '../modbus.dart';
-import 'exceptions.dart';
 import 'util.dart';
 
 /// MODBUS client
